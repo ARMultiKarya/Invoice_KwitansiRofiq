@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aplikasi Kwitansi - Laksana Harapan Bangsa</title>
+  <meta name="description" content="Aplikasi pembuat kwitansi digital resmi, praktis, dan otomatis dengan format presisi tinggi.">
+  
+  <!-- Fonts & Icon Libraries -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,500;0,600;1,500&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- html2canvas for image export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <!-- App Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Top Application Header Bar -->
+  <header class="app-header">
+    <div class="brand-container">
+      <img src="assets/logo.svg" alt="Logo Laksana Harapan Bangsa" class="brand-logo">
+      <span class="brand-title">Kwitansi & Invoice Pro</span>
+      
+      <!-- Document Mode Switcher -->
+      <div class="doc-mode-switcher" style="margin-left: 1rem;">
+        <button id="mode-btn-kwitansi" class="mode-btn active">
+          <i class="fas fa-receipt"></i> Kwitansi
+        </button>
+        <button id="mode-btn-invoice" class="mode-btn">
+          <i class="fas fa-file-invoice-dollar"></i> Invoice CV
+        </button>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button id="btn-open-review" class="btn btn-secondary">
+        <i class="fas fa-file-circle-check"></i> Review Kwitansi
+      </button>
+      <button id="btn-save-history" class="btn btn-secondary">
+        <i class="fas fa-bookmark"></i> Simpan Ke Riwayat
+      </button>
+      <button id="btn-print" class="btn btn-primary">
+        <i class="fas fa-print"></i> Cetak / PDF
+      </button>
+      <button id="btn-download-png" class="btn btn-secondary">
+        <i class="fas fa-file-image"></i> Unduh PNG
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Application Layout -->
+  <div class="main-wrapper">
+
+    <!-- Left Sidebar Control Form -->
+    <aside class="sidebar">
+      <nav class="sidebar-tabs">
+        <button class="tab-btn active" data-tab="form">
+          <i class="fas fa-pen-to-square"></i> Isi Data
+        </button>
+        <button class="tab-btn" data-tab="settings">
+          <i class="fas fa-sliders"></i> Pengaturan
+        </button>
+        <button class="tab-btn" data-tab="history">
+          <i class="fas fa-clock-rotate-left"></i> Riwayat
+        </button>
+      </nav>
+
+      <!-- TAB 1: FORM INPUT -->
+      <div id="tab-form" class="tab-content active">
+
+        <div class="form-group">
+          <label for="select-kwitansi-template"><i class="fas fa-palette"></i> Pilih Model Templat Kwitansi</label>
+          <select id="select-kwitansi-template">
+            <option value="cv_asp">Templat CV ANDALAN SOLUSI PRIMA (Cloned Template)</option>
+            <option value="cv_aps">Templat CV ARTHA PENA SEJAHTERA (Cloned Gold/Black)</option>
+            <option value="cv_gsm">Templat CV GARUDA SAFETY MANDIRI (Cloned Red/Charcoal)</option>
+            <option value="cv_gnm">Templat CV GRAHA NUSA MEDIKA (Cloned Blue/Cyan)</option>
+            <option value="cv_gkn">Templat CV GRIYA KEMAS NUSANTARA (Cloned Sky/Deep Blue Wave)</option>
+            <option value="cv_rgu">Templat CV RAKSA GUNA UTAMA (Cloned Navy/Green Target)</option>
+            <option value="yayasan">Templat YAYASAN LAKSANA HARAPAN BANGSA</option>
+          </select>
+        </div>
+        
+        <!-- No. Kwitansi Row -->
+        <div class="form-group">
+          <label for="input-no">
+            No. Kwitansi
+            <span id="btn-auto-no" class="label-hint"><i class="fas fa-wand-magic-sparkles"></i> Auto Generate</span>
+          </label>
+          <input type="text" id="input-no" placeholder="Contoh: 036/Ndh/X/26" autocomplete="off">
+        </div>
+
+        <!-- City & Date Row -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="input-kota">Kota / Tempat</label>
+            <input type="text" id="input-kota" placeholder="Contoh: Magelang">
+          </div>
+          <div class="form-group">
+            <label for="input-tanggal">Tanggal Kwitansi</label>
+            <input type="text" id="input-tanggal" placeholder="Contoh: 02 Oktober 2026">
+          </div>
+        </div>
+
+        <!-- Telah Diterima Dari (dengan Pilihan Otomatis SPPG) -->
+        <div class="form-group">
+          <label for="input-terima">
+            Telah Diterima Dari
+            <span class="label-hint" title="43 Daftar SPPG Tersedia"><i class="fas fa-list-check"></i> 43 SPPG</span>
+          </label>
+          <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+            <select id="select-sppg">
+              <option value="">-- Pilih dari Daftar SPPG (43 Lokasi) --</option>
+              <option value="SPPG ADIKARTO, MUNTILAN">SPPG ADIKARTO, MUNTILAN</option>
+              <option value="SPPG ARGOMULYO, SALATIGA">SPPG ARGOMULYO, SALATIGA</option>
+              <option value="SPPG BALEKERTO, KALIANGKRIK">SPPG BALEKERTO, KALIANGKRIK</option>
+              <option value="SPPG BANYUSARI, TEGALREJO">SPPG BANYUSARI, TEGALREJO</option>
+              <option value="SPPG BATURONO, SALAM">SPPG BATURONO, SALAM</option>
+              <option value="SPPG BAWANG, PAKIS">SPPG BAWANG, PAKIS</option>
+              <option value="SPPG BESERAN, KALIANGKRIK">SPPG BESERAN, KALIANGKRIK</option>
+              <option value="SPPG BLEMBENG, TEGALREJO">SPPG BLEMBENG, TEGALREJO</option>
+              <option value="SPPG BOJONG, MUNGKID">SPPG BOJONG, MUNGKID</option>
+              <option value="SPPG CANDISARI, SECANG">SPPG CANDISARI, SECANG</option>
+              <option value="SPPG DANUREJO, MERTOYUDAN">SPPG DANUREJO, MERTOYUDAN</option>
+              <option value="SPPG DLIMAS, TEGALREJO">SPPG DLIMAS, TEGALREJO</option>
+              <option value="SPPG GANDUSARI, BANDONGAN">SPPG GANDUSARI, BANDONGAN</option>
+              <option value="SPPG GIRIKULON, SECANG">SPPG GIRIKULON, SECANG</option>
+              <option value="SPPG GONDOSULI, MUNTILAN">SPPG GONDOSULI, MUNTILAN</option>
+              <option value="SPPG GONDOWANGI, SAWANGAN">SPPG GONDOWANGI, SAWANGAN</option>
+              <option value="SPPG JOGOMULYO, TEMPURAN">SPPG JOGOMULYO, TEMPURAN</option>
+              <option value="SPPG JOGOYASAN, NGABLAK">SPPG JOGOYASAN, NGABLAK</option>
+              <option value="SPPG KAJORAN, KAJORAN">SPPG KAJORAN, KAJORAN</option>
+              <option value="SPPG KALIKAJAR, WONOSOBO">SPPG KALIKAJAR, WONOSOBO</option>
+              <option value="SPPG KALISALAK, SALAMAN">SPPG KALISALAK, SALAMAN</option>
+              <option value="SPPG KAPONAN, PAKIS">SPPG KAPONAN, PAKIS</option>
+              <option value="SPPG KETEP, SAWANGAN">SPPG KETEP, SAWANGAN</option>
+              <option value="SPPG KRINCING, SECANG">SPPG KRINCING, SECANG</option>
+              <option value="SPPG MRANGGEN 2, SRUMBUNG">SPPG MRANGGEN 2, SRUMBUNG</option>
+              <option value="SPPG NGADIHARJO, BOROBUDUR">SPPG NGADIHARJO, BOROBUDUR</option>
+              <option value="SPPG NGASINAN, GRABAG">SPPG NGASINAN, GRABAG</option>
+              <option value="SPPG NOBOREJO, ARGOMULYO">SPPG NOBOREJO, ARGOMULYO</option>
+              <option value="SPPG PASURUHAN, MERTOYUDAN">SPPG PASURUHAN, MERTOYUDAN</option>
+              <option value="SPPG PLOSOGEDE, NGLUWAR">SPPG PLOSOGEDE, NGLUWAR</option>
+              <option value="SPPG PODOSOKO, CANDIMULYO">SPPG PODOSOKO, CANDIMULYO</option>
+              <option value="SPPG SIDOAGUNG, TEMPURAN">SPPG SIDOAGUNG, TEMPURAN</option>
+              <option value="SPPG SIDOGEDE, GRABAG">SPPG SIDOGEDE, GRABAG</option>
+              <option value="SPPG SIDOMULYO, SALAMAN">SPPG SIDOMULYO, SALAMAN</option>
+              <option value="SPPG SIDOREJO KIDUL, SALATIGA">SPPG SIDOREJO KIDUL, SALATIGA</option>
+              <option value="SPPG SRUMBUNG, MRANGGEN 1">SPPG SRUMBUNG, MRANGGEN 1</option>
+              <option value="SPPG SRUMBUNG, SRUMBUNG">SPPG SRUMBUNG, SRUMBUNG</option>
+              <option value="SPPG SUGIHMAS, GRABAG">SPPG SUGIHMAS, GRABAG</option>
+              <option value="SPPG SUMURARUM, GRABAG">SPPG SUMURARUM, GRABAG</option>
+              <option value="SPPG SUROJOYO, CANDIMULYO">SPPG SUROJOYO, CANDIMULYO</option>
+              <option value="SPPG TEMPAK, CANDIMULYO">SPPG TEMPAK, CANDIMULYO</option>
+              <option value="SPPG TRASAN, BANDONGAN">SPPG TRASAN, BANDONGAN</option>
+              <option value="SPPG WINDUSARI, WINDUSARI">SPPG WINDUSARI, WINDUSARI</option>
+            </select>
+            <input type="text" id="input-terima" list="sppg-datalist" placeholder="Atau ketik nama pembayar / SPPG..." autocomplete="off">
+            <datalist id="sppg-datalist">
+              <option value="SPPG ADIKARTO, MUNTILAN"></option>
+              <option value="SPPG ARGOMULYO, SALATIGA"></option>
+              <option value="SPPG BALEKERTO, KALIANGKRIK"></option>
+              <option value="SPPG BANYUSARI, TEGALREJO"></option>
+              <option value="SPPG BATURONO, SALAM"></option>
+              <option value="SPPG BAWANG, PAKIS"></option>
+              <option value="SPPG BESERAN, KALIANGKRIK"></option>
+              <option value="SPPG BLEMBENG, TEGALREJO"></option>
+              <option value="SPPG BOJONG, MUNGKID"></option>
+              <option value="SPPG CANDISARI, SECANG"></option>
+              <option value="SPPG DANUREJO, MERTOYUDAN"></option>
+              <option value="SPPG DLIMAS, TEGALREJO"></option>
+              <option value="SPPG GANDUSARI, BANDONGAN"></option>
+              <option value="SPPG GIRIKULON, SECANG"></option>
+              <option value="SPPG GONDOSULI, MUNTILAN"></option>
+              <option value="SPPG GONDOWANGI, SAWANGAN"></option>
+              <option value="SPPG JOGOMULYO, TEMPURAN"></option>
+              <option value="SPPG JOGOYASAN, NGABLAK"></option>
+              <option value="SPPG KAJORAN, KAJORAN"></option>
+              <option value="SPPG KALIKAJAR, WONOSOBO"></option>
+              <option value="SPPG KALISALAK, SALAMAN"></option>
+              <option value="SPPG KAPONAN, PAKIS"></option>
+              <option value="SPPG KETEP, SAWANGAN"></option>
+              <option value="SPPG KRINCING, SECANG"></option>
+              <option value="SPPG MRANGGEN 2, SRUMBUNG"></option>
+              <option value="SPPG NGADIHARJO, BOROBUDUR"></option>
+              <option value="SPPG NGASINAN, GRABAG"></option>
+              <option value="SPPG NOBOREJO, ARGOMULYO"></option>
+              <option value="SPPG PASURUHAN, MERTOYUDAN"></option>
+              <option value="SPPG PLOSOGEDE, NGLUWAR"></option>
+              <option value="SPPG PODOSOKO, CANDIMULYO"></option>
+              <option value="SPPG SIDOAGUNG, TEMPURAN"></option>
+              <option value="SPPG SIDOGEDE, GRABAG"></option>
+              <option value="SPPG SIDOMULYO, SALAMAN"></option>
+              <option value="SPPG SIDOREJO KIDUL, SALATIGA"></option>
+              <option value="SPPG SRUMBUNG, MRANGGEN 1"></option>
+              <option value="SPPG SRUMBUNG, SRUMBUNG"></option>
+              <option value="SPPG SUGIHMAS, GRABAG"></option>
+              <option value="SPPG SUMURARUM, GRABAG"></option>
+              <option value="SPPG SUROJOYO, CANDIMULYO"></option>
+              <option value="SPPG TEMPAK, CANDIMULYO"></option>
+              <option value="SPPG TRASAN, BANDONGAN"></option>
+              <option value="SPPG WINDUSARI, WINDUSARI"></option>
+            </datalist>
+          </div>
+        </div>
+
+        <!-- Jumlah Nominal (Rp) -->
+        <div class="form-group">
+          <label for="input-jumlah">Jumlah Nominal (Rp)</label>
+          <input type="number" id="input-jumlah" placeholder="30000000" min="0" step="500">
+        </div>
+
+        <!-- Terbilang (Auto Converter) -->
+        <div class="form-group">
+          <label for="input-terbilang">
+            Terbilang
+            <span class="label-hint">
+              <input type="checkbox" id="check-auto-terbilang" checked style="width:auto; margin-right:3px;">
+              Otomatis
+            </span>
+          </label>
+          <input type="text" id="input-terbilang" placeholder="Tiga Puluh Juta Rupiah" disabled>
+        </div>
+
+        <!-- Keterangan Pembayaran -->
+        <div class="form-group">
+          <label for="input-keterangan">Keterangan / Untuk Pembayaran</label>
+          <textarea id="input-keterangan" rows="2" placeholder="Detail keperluan pembayaran..."></textarea>
+        </div>
+
+        <!-- Interactive Signature Canvas -->
+        <div class="form-group">
+          <label>Tanda Tangan Penerima</label>
+          <div class="signature-control-box">
+            <div class="signature-canvas-container">
+              <canvas id="sig-canvas"></canvas>
+            </div>
+            <div class="sig-tools">
+              <div style="display:flex; gap:0.3rem;">
+                <button id="btn-undo-sig" class="btn btn-secondary btn-sm" title="Urungkan coretan">
+                  <i class="fas fa-undo"></i> Undo
+                </button>
+                <button id="btn-clear-sig" class="btn btn-secondary btn-sm" title="Hapus seluruh tanda tangan">
+                  <i class="fas fa-eraser"></i> Hapus
+                </button>
+              </div>
+              <label class="btn btn-outline btn-sm" style="margin:0; cursor:pointer;" title="Unggah gambar tanda tangan (PNG/JPG)">
+                <i class="fas fa-upload"></i> Unggah Gambar
+                <input type="file" id="input-sig-upload" accept="image/*" style="display:none;">
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- INVOICE SPECIFIC CONTROLS (Displayed when Invoice Mode is active) -->
+        <div id="invoice-controls-group" style="display:none; flex-direction:column; gap:1rem; border-top:2px solid var(--accent-blue); padding-top:1rem; margin-top:0.5rem;">
+          <div class="form-group">
+            <label for="select-preset-cv"><i class="fas fa-building-circle-check"></i> Pilih Profile CV / Templat</label>
+            <select id="select-preset-cv">
+              <option value="CV ANDALAN SOLUSI PRIMA">CV ANDALAN SOLUSI PRIMA (Templat Resmi)</option>
+              <option value="CV ARTHA PENA SEJAHTERA">CV ARTHA PENA SEJAHTERA (Alat Tulis Kantor)</option>
+              <option value="CV GARUDA SAFETY MANDIRI">CV GARUDA SAFETY MANDIRI (APD / Safety Equipment)</option>
+              <option value="CV GRAHA NUSA MEDIKA">CV GRAHA NUSA MEDIKA (Kesehatan / Goods)</option>
+              <option value="CV GRIYA KEMAS NUSANTARA">CV GRIYA KEMAS NUSANTARA (Kemasan / Packaging)</option>
+              <option value="CV RAKSA GUNA UTAMA">CV RAKSA GUNA UTAMA (Rentokil / Pest Control)</option>
+              <option value="CV UTAMA KARYA MANDIRI">CV UTAMA KARYA MANDIRI</option>
+              <option value="CV BERKAH SEJAHTERA">CV BERKAH SEJAHTERA</option>
+              <option value="CV BINTANG NUSANTARA">CV BINTANG NUSANTARA</option>
+              <option value="CV GRAHA JAYA MULTI">CV GRAHA JAYA MULTI</option>
+              <option value="CV MITRA BERSAMA">CV MITRA BERSAMA</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="input-inv-no">No. Invoice</label>
+              <input type="text" id="input-inv-no" placeholder="INV/ASP/X/2026">
+            </div>
+            <div class="form-group">
+              <label for="input-inv-due">Jatuh Tempo</label>
+              <input type="text" id="input-inv-due" placeholder="16 Oktober 2026">
+            </div>
+          </div>
+
+          <!-- Items Table Form Input -->
+          <div class="form-group">
+            <label style="display:flex; justify-content:space-between; align-items:center;">
+              Rincian Barang / Jasa
+              <button type="button" id="btn-add-inv-item" class="btn btn-secondary btn-sm">
+                <i class="fas fa-plus"></i> Baris Baru
+              </button>
+            </label>
+            <div id="inv-form-items-list" style="display:flex; flex-direction:column; gap:0.5rem; margin-top:0.3rem;">
+              <!-- Item rows generated dynamically -->
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="input-inv-ppn">PPN (%)</label>
+              <select id="input-inv-ppn">
+                <option value="0">0% (Tanpa PPN)</option>
+                <option value="11">11% PPN</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="input-inv-diskon">Diskon (Rp)</label>
+              <input type="number" id="input-inv-diskon" value="0" min="0" step="1000">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="input-inv-bank">Info Rekening Pembayaran</label>
+            <input type="text" id="input-inv-bank" placeholder="Contoh: BCA 1234567890 a.n CV ANDALAN SOLUSI PRIMA">
+          </div>
+        </div>
+
+        <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
+          <button id="btn-reset-form" class="btn btn-outline btn-block">
+            <i class="fas fa-rotate-left"></i> Reset Form
+          </button>
+        </div>
+
+      </div>
+
+      <!-- TAB 2: PENGATURAN HEADER & LOGO YAYASAN -->
+      <div id="tab-settings" class="tab-content">
+        
+        <div class="form-group">
+          <label for="select-preset-yayasan">
+            <i class="fas fa-building"></i> Pilih Preset Yayasan / Instansi
+          </label>
+          <select id="select-preset-yayasan">
+            <option value="LAKSANA HARAPAN BANGSA">LAKSANA HARAPAN BANGSA (Default)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="input-company-name">Nama Perusahaan / Yayasan / Instansi</label>
+          <input type="text" id="input-company-name" placeholder="Contoh: LAKSANA HARAPAN BANGSA">
+        </div>
+
+        <div class="form-group">
+          <label><i class="fas fa-image"></i> Logo Header & Watermark</label>
+          <div style="display:flex; gap:0.5rem; flex-direction:column;">
+            <label class="btn btn-outline btn-block" style="cursor:pointer; margin-top:0.2rem;">
+              <i class="fas fa-cloud-arrow-up"></i> Unggah File Logo Baru (PNG/JPG/SVG)
+              <input type="file" id="input-logo-upload" accept="image/*" style="display:none;">
+            </label>
+            <button id="btn-save-yayasan-logo" class="btn btn-secondary btn-block">
+              <i class="fas fa-floppy-disk"></i> Simpan Logo Untuk Yayasan Ini
+            </button>
+          </div>
+          <span style="font-size:0.75rem; color:var(--text-muted); margin-top:0.25rem;">
+            Logo yang disimpan akan **otomatis muncul** setiap kali nama Yayasan tersebut dipilih.
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="input-sig-label">Label Tanda Tangan</label>
+          <input type="text" id="input-sig-label" placeholder="Penerima">
+        </div>
+
+        <!-- Section: Kelola & Tambah SPPG per Yayasan -->
+        <div class="form-group" style="margin-top: 0.5rem; border-top: 1px dashed var(--border-color); padding-top: 0.85rem;">
+          <label><i class="fas fa-list-check"></i> Tambah / Kelola SPPG per Yayasan</label>
+          <div style="display:flex; flex-direction:column; gap:0.5rem;">
+            <select id="select-manage-yayasan">
+              <!-- Rendered dynamically -->
+            </select>
+            <div style="display:flex; gap:0.4rem;">
+              <input type="text" id="input-new-sppg" placeholder="Ketik Nama SPPG Baru..." style="flex:1;">
+              <button id="btn-add-sppg" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i> Tambah
+              </button>
+            </div>
+          </div>
+          <div id="sppg-manager-container" style="margin-top:0.6rem; max-height:160px; overflow-y:auto; display:flex; flex-direction:column; gap:0.35rem;">
+            <!-- List of SPPGs under selected yayasan -->
+          </div>
+        </div>
+
+        <!-- Section: Kelola Nomor Urut Kwitansi Per Yayasan -->
+        <div class="form-group" style="margin-top: 0.5rem; border-top: 1px dashed var(--border-color); padding-top: 0.85rem;">
+          <label><i class="fas fa-arrow-down-1-9"></i> Kelola Nomor Urut Kwitansi Per Yayasan</label>
+          <span style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.25rem;">
+            Nomor urut otomatis naik +1 setiap kwitansi disimpan atau diunduh. Anda bisa mengubah nomor urut di bawah ini:
+          </span>
+          <div id="yayasan-counter-list" style="display:flex; flex-direction:column; gap:0.4rem; max-height:180px; overflow-y:auto;">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- Managed Saved Yayasan Logos List -->
+        <div class="form-group" style="margin-top: 0.5rem;">
+          <label><i class="fas fa-images"></i> Daftar Logo Yayasan Tersimpan</label>
+          <div id="yayasan-logo-list" class="yayasan-logo-grid">
+            <!-- Rendered dynamically by JS -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- TAB 3: RIWAYAT TERKIRIM -->
+      <div id="tab-history" class="tab-content">
+        <div class="rekap-summary-card">
+          <div class="rekap-item">
+            <span class="rekap-label">Total Kwitansi</span>
+            <span id="rekap-count" class="rekap-value">0</span>
+          </div>
+          <div class="rekap-item">
+            <span class="rekap-label">Total Akumulasi</span>
+            <span id="rekap-total" class="rekap-value">Rp 0</span>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <label style="margin:0;">Riwayat Kwitansi</label>
+          <button id="btn-export-csv" class="btn btn-outline btn-sm">
+            <i class="fas fa-file-csv"></i> Export CSV
+          </button>
+        </div>
+        <div id="history-list" class="history-list">
+          <!-- Filled dynamically via JS -->
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- Right Interactive Workspace (Kwitansi Sheet Live Preview) -->
+    <main class="preview-area">
+      
+      <!-- Toolbar controls above kwitansi paper -->
+      <div class="preview-toolbar">
+        <div class="toolbar-group">
+          <span style="font-size:0.85rem; font-weight:600; color:var(--text-muted); margin-right:0.5rem;">
+            <i class="fas fa-eye"></i> Pratinjau Kwitansi
+          </span>
+        </div>
+
+        <div class="toolbar-group">
+          <button id="btn-zoom-out" class="btn btn-secondary btn-sm" title="Perkecil Tampilan">
+            <i class="fas fa-magnifying-glass-minus"></i>
+          </button>
+          <span id="zoom-val" style="font-size:0.85rem; font-weight:700; width:45px; text-align:center;">100%</span>
+          <button id="btn-zoom-in" class="btn btn-secondary btn-sm" title="Perbesar Tampilan">
+            <i class="fas fa-magnifying-glass-plus"></i>
+          </button>
+          <button id="btn-zoom-reset" class="btn btn-outline btn-sm" title="Reset Skala">
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <!-- Paper container with scale transform -->
+      <div id="paper-container" class="paper-container">
+
+        <!-- KWITANSI PRINTABLE SHEET (Exact cloned design matching reference image) -->
+        <div id="kwitansi-paper" class="kwitansi-paper">
+          
+          <!-- Background Watermark Logo & Text -->
+          <div class="kwitansi-watermark">
+            <img id="kw-watermark-logo" src="assets/logo.svg" alt="Watermark Logo">
+            <div id="kw-watermark-text" class="watermark-text">LAKSANA<br>HARAPAN<br>BANGSA</div>
+          </div>
+
+          <!-- Foreground Content Overlay -->
+          <div class="kwitansi-content">
+            
+            <!-- HEADER SECTION -->
+            <header class="kw-header">
+              
+              <!-- Header Left: Logo + Company Name + No. Kwitansi -->
+              <div style="display:flex; flex-direction:column; gap:0.75rem;">
+                <div class="kw-company">
+                  <img id="kw-logo-img" src="assets/logo.svg" alt="Logo Company" class="kw-company-logo">
+                  <div class="kw-company-details">
+                    <div id="kw-company-header" class="kw-company-name">LAKSANA<br>HARAPAN BANGSA</div>
+                  </div>
+                </div>
+
+                <div class="kw-no-row">
+                  <span class="kw-no-label">No.</span>
+                  <div id="kw-no-val" class="kw-no-value-box">036/Ndh/X/26</div>
+                </div>
+              </div>
+
+              <!-- Header Right: KWITANSI Title + Date -->
+              <div class="kw-title-block">
+                <h1 class="kw-main-title">KWITANSI</h1>
+                <div class="kw-date-row">
+                  <span id="kw-city-val" class="kw-city">Magelang,</span>
+                  <div id="kw-date-val" class="kw-date-value">02 Oktober 2026</div>
+                </div>
+              </div>
+
+            </header>
+
+            <!-- BODY FIELDS SECTION -->
+            <div class="kw-body">
+              
+              <!-- Row 1: Telah Diterima Dari -->
+              <div class="kw-field-row">
+                <div class="kw-field-label">Telah Diterima Dari</div>
+                <div id="kw-terima-val" class="kw-field-underline">SPPG Ngadiharjo, Borobudur</div>
+              </div>
+
+              <!-- Row 2: Terbilang -->
+              <div class="kw-field-row">
+                <div class="kw-field-label">Terbilang</div>
+                <div id="kw-terbilang-val" class="kw-field-underline kw-terbilang-value">Tiga Puluh Juta Rupiah</div>
+              </div>
+
+              <!-- Row 3: Keterangan -->
+              <div class="kw-field-row">
+                <div class="kw-field-label">Keterangan</div>
+                <div id="kw-keterangan-val" class="kw-field-underline">Pembayaran Sewa Dapur Periode 28 September – 02 Oktober 2026</div>
+              </div>
+
+            </div>
+
+            <!-- FOOTER ROW SECTION -->
+            <footer class="kw-footer-row">
+              
+              <!-- Left: Amount Pill Badge -->
+              <div id="kw-jumlah-val" class="kw-amount-badge">
+                Rp 30.000.000,00
+              </div>
+
+              <!-- Right: Signature & Recipient Label -->
+              <div class="kw-signature-box">
+                <div id="kw-sig-label" class="kw-signature-label">Penerima</div>
+                <div class="kw-signature-space">
+                  <img id="kw-sig-img" class="kw-signature-img" src="" alt="" style="display:none;">
+                </div>
+                <div class="kw-signature-line"></div>
+              </div>
+
+            </footer>
+
+          </div>
+
+          <!-- Bottom Slanted Parallelogram Accent Bar (Matches Reference Image) -->
+          <div class="kw-bottom-accent">
+            <div class="kw-bottom-accent-shape"></div>
+          </div>
+
+        </div>
+
+        <!-- KWITANSI PRINTABLE SHEET (Exact Cloned CV ANDALAN SOLUSI PRIMA Template) -->
+        <div id="kwitansi-paper-cv" class="kw-cv-paper" style="display:none;">
+          
+          <!-- Background Watermark Logo -->
+          <img id="kw-cv-watermark-logo" src="assets/logo_asp.svg" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:320px; opacity:0.08; pointer-events:none; z-index:1;" alt="Watermark AP">
+
+          <!-- Foreground Content Overlay -->
+          <div style="position:relative; z-index:2; display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+            
+            <!-- HEADER SECTION -->
+            <header class="kw-cv-header">
+              <!-- Left: Logo + CV Details -->
+              <div class="kw-cv-brand">
+                <img id="kw-cv-logo-img" src="assets/logo_asp.svg" alt="Logo CV" class="kw-cv-logo">
+                <div class="kw-cv-info">
+                  <div id="kw-cv-title-val" class="kw-cv-title">CV ANDALAN SOLUSI PRIMA</div>
+                  <div class="kw-cv-address">
+                    <i class="fas fa-location-dot" style="color:#ea580c;"></i>
+                    <span id="kw-cv-addr-val">TIRTO RT 004/ RW 001, GRABAG, MAGELANG, JAWA TENGAH</span>
+                  </div>
+                  <div class="kw-cv-contact-row">
+                    <span class="kw-cv-contact-item"><i class="fas fa-envelope"></i> <span id="kw-cv-email-val">andalansolusiprima@gmail.com</span></span>
+                    <span class="kw-cv-contact-item"><i class="fas fa-phone"></i> <span id="kw-cv-phone-val">087719205704</span></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: KUITANSI PEMBAYARAN Top Banner -->
+              <div class="kw-cv-banner">
+                KUITANSI PEMBAYARAN
+              </div>
+            </header>
+
+            <!-- META ROW: RECEIPT NO & DATE -->
+            <div class="kw-cv-meta-row">
+              <div>
+                <span>No. Receipt:</span>
+                <div id="kw-cv-no-val" class="kw-cv-meta-line">036/ASP/X/26</div>
+              </div>
+              <div>
+                <span>Tanggal:</span>
+                <div id="kw-cv-date-val" class="kw-cv-meta-line">02 Oktober 2026</div>
+              </div>
+            </div>
+
+            <!-- STRUCTURED ORANGE LABEL BOXES -->
+            <div class="kw-cv-boxes-container">
+              <!-- Row 1: Telah diterima dari -->
+              <div class="kw-cv-box-row">
+                <div class="kw-cv-box-label">Telah diterima dari</div>
+                <div class="kw-cv-box-value">
+                  <div id="kw-cv-terima-val" class="kw-cv-underline-text">SPPG NGADIHARJO, BOROBUDUR</div>
+                </div>
+              </div>
+
+              <!-- Row 2: Uang sebanyak -->
+              <div class="kw-cv-box-row">
+                <div class="kw-cv-box-label">Uang sebanyak</div>
+                <div class="kw-cv-box-value">
+                  <div id="kw-cv-terbilang-val" class="kw-cv-underline-text" style="font-style:italic;">Tiga Puluh Juta Rupiah</div>
+                </div>
+              </div>
+
+              <!-- Row 3: Untuk Keperluan -->
+              <div class="kw-cv-box-row">
+                <div class="kw-cv-box-label" style="height:auto;">Untuk Keperluan</div>
+                <div class="kw-cv-box-value">
+                  <div id="kw-cv-keterangan-val" class="kw-cv-underline-text">Pembayaran Sewa Dapur Periode 28 September – 02 Oktober 2026</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- FOOTER ROW: NOMINAL BADGE & SIGNATURE -->
+            <footer class="kw-cv-footer-row">
+              <!-- Left: Pill Nominal Badge -->
+              <div class="kw-cv-nominal-pill">
+                <div class="kw-cv-nominal-left">Nominal:</div>
+                <div id="kw-cv-jumlah-val" class="kw-cv-nominal-right">Rp. 30.000.000,00</div>
+              </div>
+
+              <!-- Right: Location & Signature -->
+              <div class="kw-cv-sig-container">
+                <div><span id="kw-cv-city-val">Magelang</span>, <span id="kw-cv-sig-date-val">02 Oktober 2026</span></div>
+                <div id="kw-cv-sig-label-val" style="margin-top:0.2rem;">Penerima</div>
+                <div style="height:50px; display:flex; align-items:center; justify-content:center;">
+                  <img id="kw-cv-sig-img" src="" alt="" style="max-height:45px; display:none;">
+                </div>
+                <div class="kw-cv-sig-line"></div>
+              </div>
+            </footer>
+
+          </div>
+
+          <!-- Bottom Smooth Wave Accent -->
+          <div class="kw-cv-bottom-wave"></div>
+        </div>
+
+        <!-- KWITANSI PRINTABLE SHEET (CV ARTHA PENA SEJAHTERA Gold/Black Cloned Design) -->
+        <div id="kwitansi-paper-aps" class="kw-aps-paper" style="display:none;">
+          
+          <!-- Background Watermark Logo -->
+          <img id="kw-aps-watermark-logo" src="assets/logo_aps.svg" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:320px; opacity:0.07; pointer-events:none; z-index:1;" alt="Watermark APS">
+
+          <!-- Foreground Content Overlay -->
+          <div style="position:relative; z-index:2; display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+            
+            <!-- HEADER SECTION -->
+            <header class="kw-aps-header">
+              <!-- Left: Circular Logo + CV Contact Info -->
+              <div class="kw-aps-brand">
+                <img id="kw-aps-logo-img" src="assets/logo_aps.svg" alt="Logo CV" class="kw-aps-logo">
+                <div class="kw-aps-brand-divider"></div>
+                <div class="kw-aps-info">
+                  <div id="kw-aps-title-val" class="kw-aps-title">CV ARTHA PENA SEJAHTERA</div>
+                  <div class="kw-aps-address">
+                    <i class="fas fa-location-dot" style="color:#111;"></i>
+                    <span id="kw-aps-addr-val">Dusun Paingan RT 003/ RW 002, Kleteran, Kec Grabag, Kab Magelang, Jawa Tengah</span>
+                  </div>
+                  <div class="kw-aps-contact-row">
+                    <span class="kw-aps-contact-item"><i class="fas fa-phone"></i> <span id="kw-aps-phone-val">081542559226</span></span>
+                    <span class="kw-aps-contact-item"><i class="fas fa-envelope"></i> <span id="kw-aps-email-val">arthapenasejahtera@gmail.com</span></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: KUITANSI PEMBAYARAN Black Banner + Gold Wave -->
+              <div class="kw-aps-banner-container">
+                <div class="kw-aps-banner">
+                  KUITANSI PEMBAYARAN
+                </div>
+                <div class="kw-aps-top-wave">
+                  <svg viewBox="0 0 260 30" preserveAspectRatio="none" style="width:100%; height:25px; display:block;">
+                    <path d="M 0,0 C 80,25 180,25 260,0 L 260,12 C 180,32 80,32 0,12 Z" fill="#d4af37" />
+                    <path d="M 0,10 C 80,30 180,30 260,10 L 260,18 C 180,35 80,35 0,18 Z" fill="#aa771c" />
+                  </svg>
+                </div>
+              </div>
+            </header>
+
+            <!-- META ROW: RECEIPT NO & DATE -->
+            <div class="kw-aps-meta-row">
+              <div>
+                <span>No. Receipt:</span>
+                <div id="kw-aps-no-val" class="kw-aps-meta-line">001/OPS/SPPG/VIII/26</div>
+              </div>
+              <div>
+                <span>Tanggal:</span>
+                <div id="kw-aps-date-val" class="kw-aps-meta-line">02 Oktober 2026</div>
+              </div>
+            </div>
+
+            <!-- STRUCTURED DARK LABEL BOXES WITH GOLD BORDER -->
+            <div class="kw-aps-boxes-container">
+              <!-- Row 1: Telah diterima dari -->
+              <div class="kw-aps-box-row">
+                <div class="kw-aps-box-label">Telah diterima dari</div>
+                <div class="kw-aps-box-value">
+                  <div id="kw-aps-terima-val" class="kw-aps-underline-text">SPPG NGADIHARJO, BOROBUDUR</div>
+                </div>
+              </div>
+
+              <!-- Row 2: Uang sebanyak -->
+              <div class="kw-aps-box-row">
+                <div class="kw-aps-box-label">Uang sebanyak</div>
+                <div class="kw-aps-box-value">
+                  <div id="kw-aps-terbilang-val" class="kw-aps-underline-text" style="font-style:italic;">Tiga Puluh Juta Rupiah</div>
+                </div>
+              </div>
+
+              <!-- Row 3: Untuk Keperluan -->
+              <div class="kw-aps-box-row">
+                <div class="kw-aps-box-label" style="height:auto;">Untuk Keperluan</div>
+                <div class="kw-aps-box-value">
+                  <div id="kw-aps-keterangan-val" class="kw-aps-underline-text">Pembayaran Sewa Dapur Periode 28 September – 02 Oktober 2026</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- FOOTER ROW: NOMINAL BADGE & SIGNATURE -->
+            <footer class="kw-aps-footer-row">
+              <!-- Left: Dark Pill Nominal Badge with Gold Border -->
+              <div class="kw-aps-nominal-pill">
+                <div class="kw-aps-nominal-left">Nominal:</div>
+                <div id="kw-aps-jumlah-val" class="kw-aps-nominal-right">Rp. 30.000.000,00</div>
+              </div>
+
+              <!-- Right: Location & Signature -->
+              <div class="kw-aps-sig-container">
+                <div><span id="kw-aps-city-val">Magelang</span>, <span id="kw-aps-sig-date-val">02 Oktober 2026</span></div>
+                <div id="kw-aps-sig-label-val" style="margin-top:0.2rem;">Penerima</div>
+                <div style="height:50px; display:flex; align-items:center; justify-content:center;">
+                  <img id="kw-aps-sig-img" src="" alt="" style="max-height:45px; display:none;">
+                </div>
+                <div class="kw-aps-sig-line"></div>
+              </div>
+            </footer>
+
+          </div>
+
+          <!-- Bottom Double Metallic Gold Wave Accent -->
+          <div class="kw-aps-bottom-wave">
+            <svg viewBox="0 0 860 40" preserveAspectRatio="none" style="width:100%; height:35px; display:block;">
+              <path d="M 0,40 Q 200,0 430,20 T 860,0 L 860,40 Z" fill="#1a1a1a" />
+              <path d="M 0,35 Q 200,-5 430,15 T 860,-5 L 860,5 Q 430,25 200,5 Z" fill="#d4af37" />
+              <path d="M 0,38 Q 200,2 430,18 T 860,2 L 860,8 Q 430,28 200,8 Z" fill="#aa771c" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- KWITANSI PRINTABLE SHEET (CV GARUDA SAFETY MANDIRI Red/Charcoal Cloned Design) -->
+        <div id="kwitansi-paper-gsm" class="kw-gsm-paper" style="display:none;">
+          
+          <!-- Background Watermark Logo -->
+          <img id="kw-gsm-watermark-logo" src="assets/logo_gsm.svg" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:340px; opacity:0.07; pointer-events:none; z-index:1;" alt="Watermark GSM">
+
+          <!-- Foreground Content Overlay -->
+          <div style="position:relative; z-index:2; display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+            
+            <!-- HEADER SECTION -->
+            <header class="kw-gsm-header">
+              <!-- Left: Eagle Logo + CV Details -->
+              <div class="kw-gsm-brand">
+                <img id="kw-gsm-logo-img" src="assets/logo_gsm.svg" alt="Logo CV" class="kw-gsm-logo">
+                <div class="kw-gsm-brand-divider"></div>
+                <div class="kw-gsm-info">
+                  <div id="kw-gsm-title-val" class="kw-gsm-title">CV GARUDA SAFETY MANDIRI</div>
+                  <div class="kw-gsm-address">
+                    <i class="fas fa-location-dot" style="color:#b91c1c;"></i>
+                    <span id="kw-gsm-addr-val">Susukan RT 005/ RW 002, Grabag, Kec Grabag, Kab Magelang, Jawa Tengah</span>
+                  </div>
+                  <div class="kw-gsm-contact-row">
+                    <span class="kw-gsm-contact-item"><i class="fas fa-phone"></i> <span id="kw-gsm-phone-val">087840939397</span></span>
+                    <span class="kw-gsm-contact-item"><i class="fas fa-envelope"></i> <span id="kw-gsm-email-val">garudasafetymandiri@gmail.com</span></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: KUITANSI PEMBAYARAN Red Banner + Red/Charcoal Wave -->
+              <div class="kw-gsm-banner-container">
+                <div class="kw-gsm-banner">
+                  KUITANSI PEMBAYARAN
+                </div>
+                <div class="kw-gsm-top-wave">
+                  <svg viewBox="0 0 260 30" preserveAspectRatio="none" style="width:100%; height:25px; display:block;">
+                    <path d="M 0,0 C 80,25 180,25 260,0 L 260,12 C 180,32 80,32 0,12 Z" fill="#b91c1c" />
+                    <path d="M 0,10 C 80,30 180,30 260,10 L 260,18 C 180,35 80,35 0,18 Z" fill="#1f2937" />
+                  </svg>
+                </div>
+              </div>
+            </header>
+
+            <!-- META ROW: RECEIPT NO & DATE -->
+            <div class="kw-gsm-meta-row">
+              <div>
+                <span>No. Receipt:</span>
+                <div id="kw-gsm-no-val" class="kw-gsm-meta-line">001/OPS/SPPG/VIII/26</div>
+              </div>
+              <div>
+                <span>Tanggal:</span>
+                <div id="kw-gsm-date-val" class="kw-gsm-meta-line">02 Oktober 2026</div>
+              </div>
+            </div>
+
+            <!-- STRUCTURED DEEP RED LABEL BOXES -->
+            <div class="kw-gsm-boxes-container">
+              <!-- Row 1: Telah diterima dari -->
+              <div class="kw-gsm-box-row">
+                <div class="kw-gsm-box-label">Telah diterima dari</div>
+                <div class="kw-gsm-box-value">
+                  <div id="kw-gsm-terima-val" class="kw-gsm-underline-text">SPPG NGADIHARJO, BOROBUDUR</div>
+                </div>
+              </div>
+
+              <!-- Row 2: Uang sebanyak -->
+              <div class="kw-gsm-box-row">
+                <div class="kw-gsm-box-label">Uang sebanyak</div>
+                <div class="kw-gsm-box-value">
+                  <div id="kw-gsm-terbilang-val" class="kw-gsm-underline-text" style="font-style:italic;">Tiga Puluh Juta Rupiah</div>
+                </div>
+              </div>
+
+              <!-- Row 3: Untuk Keperluan -->
+              <div class="kw-gsm-box-row">
+                <div class="kw-gsm-box-label" style="height:auto;">Untuk Keperluan</div>
+                <div class="kw-gsm-box-value">
+                  <div id="kw-gsm-keterangan-val" class="kw-gsm-underline-text">Pembayaran Kebutuhan Operasional Periode 28 September – 02 Oktober 2026</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- FOOTER ROW: NOMINAL BADGE & SIGNATURE -->
+            <footer class="kw-gsm-footer-row">
+              <!-- Left: Red Pill Nominal Badge -->
+              <div class="kw-gsm-nominal-pill">
+                <div class="kw-gsm-nominal-left">Nominal:</div>
+                <div id="kw-gsm-jumlah-val" class="kw-gsm-nominal-right">Rp. 30.000.000,00</div>
+              </div>
+
+              <!-- Right: Location & Signature with Director Parentheses -->
+              <div class="kw-gsm-sig-container">
+                <div><span id="kw-gsm-city-val">Magelang</span>, <span id="kw-gsm-sig-date-val">02 Oktober 2026</span></div>
+                <div id="kw-gsm-sig-label-val" style="margin-top:0.2rem;">Penerima</div>
+                <div style="height:50px; display:flex; align-items:center; justify-content:center;">
+                  <img id="kw-gsm-sig-img" src="" alt="" style="max-height:45px; display:none;">
+                </div>
+                <div class="kw-gsm-sig-line">( <span id="kw-gsm-signer-name">Dwi Wahyu Affandi</span> )</div>
+              </div>
+            </footer>
+
+          </div>
+
+          <!-- Bottom Red/Charcoal Slanted Wave Accent Bar -->
+          <div class="kw-gsm-bottom-wave">
+            <div class="gsm-kw-red-bar"></div>
+            <div class="gsm-kw-right-accents">
+              <div class="gsm-kw-charcoal-block"></div>
+              <div class="gsm-kw-stripes">
+                <span></span><span></span><span></span>
+              </div>
+              <div class="gsm-kw-red-corner"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- KWITANSI PRINTABLE SHEET (CV GRAHA NUSA MEDIKA Blue/Cyan Cloned Design) -->
+        <div id="kwitansi-paper-gnm" class="kw-gnm-paper" style="display:none;">
+          
+          <!-- Background Watermark Logo -->
+          <img id="kw-gnm-watermark-logo" src="assets/logo_gnm.svg" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:340px; opacity:0.07; pointer-events:none; z-index:1;" alt="Watermark GNM">
+
+          <!-- Foreground Content Overlay -->
+          <div style="position:relative; z-index:2; display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+            
+            <!-- HEADER SECTION -->
+            <header class="kw-gnm-header">
+              <!-- Left: Medical Cross Logo + CV Contact Info -->
+              <div class="kw-gnm-brand">
+                <img id="kw-gnm-logo-img" src="assets/logo_gnm.svg" alt="Logo CV" class="kw-gnm-logo">
+                <div class="kw-gnm-info">
+                  <div id="kw-gnm-title-val" class="kw-gnm-title">CV GRAHA NUSA MEDIKA</div>
+                  <div class="kw-gnm-address">
+                    <i class="fas fa-location-dot" style="color:#0f2b5c;"></i>
+                    <span id="kw-gnm-addr-val">Ponggol 1 RT 007/RW 003, Grabag, Kec. Grabag, Kab. Magelang, Jawa Tengah</span>
+                  </div>
+                  <div class="kw-gnm-contact-row">
+                    <span class="kw-gnm-contact-item"><i class="fas fa-phone"></i> Telp/HP: <span id="kw-gnm-phone-val">085866606808</span></span>
+                    <span class="kw-gnm-contact-sep">|</span>
+                    <span class="kw-gnm-contact-item"><i class="fas fa-envelope"></i> <span id="kw-gnm-email-val">grahanusamedika@gmail.com</span></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: KUITANSI PEMBAYARAN Navy Banner + Cyan Wave -->
+              <div class="kw-gnm-banner-container">
+                <div class="kw-gnm-banner">
+                  KUITANSI PEMBAYARAN
+                </div>
+                <div class="kw-gnm-top-wave">
+                  <svg viewBox="0 0 260 30" preserveAspectRatio="none" style="width:100%; height:25px; display:block;">
+                    <path d="M 0,0 C 80,25 180,25 260,0 L 260,12 C 180,32 80,32 0,12 Z" fill="#38bdf8" />
+                    <path d="M 0,10 C 80,30 180,30 260,10 L 260,18 C 180,35 80,35 0,18 Z" fill="#0284c7" />
+                  </svg>
+                </div>
+              </div>
+            </header>
+
+            <!-- META ROW: RECEIPT NO & DATE -->
+            <div class="kw-gnm-meta-row">
+              <div>
+                <span>No. Receipt:</span>
+                <div id="kw-gnm-no-val" class="kw-gnm-meta-line">001/OPS/SPPG/VIII/26</div>
+              </div>
+              <div>
+                <span>Tanggal:</span>
+                <div id="kw-gnm-date-val" class="kw-gnm-meta-line">02 Oktober 2026</div>
+              </div>
+            </div>
+
+            <!-- STRUCTURED DEEP NAVY LABEL BOXES -->
+            <div class="kw-gnm-boxes-container">
+              <!-- Row 1: Telah diterima dari -->
+              <div class="kw-gnm-box-row">
+                <div class="kw-gnm-box-label">Telah diterima dari</div>
+                <div class="kw-gnm-box-value">
+                  <div id="kw-gnm-terima-val" class="kw-gnm-underline-text">SPPG NGADIHARJO, BOROBUDUR</div>
+                </div>
+              </div>
+
+              <!-- Row 2: Uang sebanyak -->
+              <div class="kw-gnm-box-row">
+                <div class="kw-gnm-box-label">Uang sebanyak</div>
+                <div class="kw-gnm-box-value">
+                  <div id="kw-gnm-terbilang-val" class="kw-gnm-underline-text" style="font-style:italic;">Tiga Puluh Juta Rupiah</div>
+                </div>
+              </div>
+
+              <!-- Row 3: Untuk Keperluan -->
+              <div class="kw-gnm-box-row">
+                <div class="kw-gnm-box-label" style="height:auto;">Untuk Keperluan</div>
+                <div class="kw-gnm-box-value">
+                  <div id="kw-gnm-keterangan-val" class="kw-gnm-underline-text">Pembayaran Kebutuhan Operasional Periode 28 September – 02 Oktober 2026</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- FOOTER ROW: NOMINAL BADGE & SIGNATURE -->
+            <footer class="kw-gnm-footer-row">
+              <!-- Left: Navy Pill Nominal Badge -->
+              <div class="kw-gnm-nominal-pill">
+                <div class="kw-gnm-nominal-left">Nominal:</div>
+                <div id="kw-gnm-jumlah-val" class="kw-gnm-nominal-right">Rp. 30.000.000,00</div>
+              </div>
+
+              <!-- Right: Location & Signature -->
+              <div class="kw-gnm-sig-container">
+                <div><span id="kw-gnm-city-val">Magelang</span>, <span id="kw-gnm-sig-date-val">02 Oktober 2026</span></div>
+                <div id="kw-gnm-sig-label-val" style="margin-top:0.2rem;">Penerima</div>
+                <div style="height:50px; display:flex; align-items:center; justify-content:center;">
+                  <img id="kw-gnm-sig-img" src="" alt="" style="max-height:45px; display:none;">
+                </div>
+                <div class="kw-gnm-sig-line"></div>
+              </div>
+            </footer>
+
+          </div>
+
+          <!-- Bottom Double Cyan & Blue Curved Wave Accent -->
+          <div class="kw-gnm-bottom-wave">
+            <svg viewBox="0 0 860 40" preserveAspectRatio="none" style="width:100%; height:35px; display:block;">
+              <path d="M 0,40 Q 200,0 430,20 T 860,0 L 860,40 Z" fill="#0f2b5c" />
+              <path d="M 0,35 Q 200,-5 430,15 T 860,-5 L 860,5 Q 430,25 200,5 Z" fill="#38bdf8" />
+              <path d="M 0,38 Q 200,2 430,18 T 860,2 L 860,8 Q 430,28 200,8 Z" fill="#0284c7" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- KWITANSI PRINTABLE SHEET (CV GRIYA KEMAS NUSANTARA Sky/Deep Blue Wave Cloned Design) -->
+        <div id="kwitansi-paper-gkn" class="kw-gkn-paper" style="display:none;">
+          
+          <!-- Background Watermark Logo -->
+          <img id="kw-gkn-watermark-logo" src="assets/logo_gkn.svg" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:340px; opacity:0.07; pointer-events:none; z-index:1;" alt="Watermark GKN">
+
+          <!-- Foreground Content Overlay -->
+          <div style="position:relative; z-index:2; display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+            
+            <!-- HEADER SECTION -->
+            <header class="kw-gkn-header">
+              <!-- Left: House Swoop Logo + CV Contact Info -->
+              <div class="kw-gkn-brand">
+                <img id="kw-gkn-logo-img" src="assets/logo_gkn.svg" alt="Logo CV" class="kw-gkn-logo">
+                <div class="kw-gkn-info">
+                  <div id="kw-gkn-title-val" class="kw-gkn-title">CV GRIYA KEMAS NUSANTARA</div>
+                  <div class="kw-gkn-address">
+                    <i class="fas fa-location-dot" style="color:#0284c7;"></i>
+                    <span id="kw-gkn-addr-val">Susukan RT 005/ RW 002, Grabag, Kec Grabag, Kab Magelang, Jawa Tengah</span>
+                  </div>
+                  <div class="kw-gkn-contact-row">
+                    <span class="kw-gkn-contact-item"><i class="fas fa-phone"></i> <span id="kw-gkn-phone-val">081903487811</span></span>
+                    <span class="kw-gkn-contact-sep">|</span>
+                    <span class="kw-gkn-contact-item"><i class="fas fa-envelope"></i> <span id="kw-gkn-email-val">griyakemasnusantara@gmail.com</span></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: KUITANSI PEMBAYARAN Blue Banner + Double Wave -->
+              <div class="kw-gkn-banner-container">
+                <div class="kw-gkn-banner">
+                  KUITANSI PEMBAYARAN
+                </div>
+                <div class="kw-gkn-top-wave">
+                  <svg viewBox="0 0 260 30" preserveAspectRatio="none" style="width:100%; height:25px; display:block;">
+                    <path d="M 0,0 C 80,25 180,25 260,0 L 260,12 C 180,32 80,32 0,12 Z" fill="#0284c7" />
+                    <path d="M 0,10 C 80,30 180,30 260,10 L 260,18 C 180,35 80,35 0,18 Z" fill="#0e4da4" />
+                  </svg>
+                </div>
+              </div>
+            </header>
+
+            <!-- META ROW: RECEIPT NO & DATE -->
+            <div class="kw-gkn-meta-row">
+              <div>
+                <span>No. Receipt:</span>
+                <div id="kw-gkn-no-val" class="kw-gkn-meta-line">001/OPS/SPPG/VIII/26</div>
+              </div>
+              <div>
+                <span>Tanggal:</span>
+                <div id="kw-gkn-date-val" class="kw-gkn-meta-line">02 Oktober 2026</div>
+              </div>
+            </div>
+
+            <!-- STRUCTURED BLUE LABEL BOXES -->
+            <div class="kw-gkn-boxes-container">
+              <!-- Row 1: Telah diterima dari -->
+              <div class="kw-gkn-box-row">
+                <div class="kw-gkn-box-label">Telah diterima dari</div>
+                <div class="kw-gkn-box-value">
+                  <div id="kw-gkn-terima-val" class="kw-gkn-underline-text">SPPG NGADIHARJO, BOROBUDUR</div>
+                </div>
+              </div>
+
+              <!-- Row 2: Uang sebanyak -->
+              <div class="kw-gkn-box-row">
+                <div class="kw-gkn-box-label">Uang sebanyak</div>
+                <div class="kw-gkn-box-value">
+                  <div id="kw-gkn-terbilang-val" class="kw-gkn-underline-text" style="font-style:italic;">Tiga Puluh Juta Rupiah</div>
+                </div>
+              </div>
+
+              <!-- Row 3: Untuk Keperluan -->
+              <div class="kw-gkn-box-row">
+                <div class="kw-gkn-box-label" style="height:auto;">Untuk Keperluan</div>
+                <div class="kw-gkn-box-value">
+                  <div id="kw-gkn-keterangan-val" class="kw-gkn-underline-text">Pembayaran Kebutuhan Operasional Periode 28 September – 02 Oktober 2026</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- FOOTER ROW: NOMINAL BADGE & SIGNATURE -->
+            <footer class="kw-gkn-footer-row">
+              <!-- Left: Blue Pill Nominal Badge -->
+              <div class="kw-gkn-nominal-pill">
+                <div class="kw-gkn-nominal-left">Nominal:</div>
+                <div id="kw-gkn-jumlah-val" class="kw-gkn-nominal-right">Rp. 30.000.000,00</div>
+              </div>
+
+              <!-- Right: Location & Signature -->
+              <div class="kw-gkn-sig-container">
+                <div><span id="kw-gkn-city-val">Magelang</span>, <span id="kw-gkn-sig-date-val">02 Oktober 2026</span></div>
+                <div id="kw-gkn-sig-label-val" style="margin-top:0.2rem;">CV Griya Kemas Nusantara</div>
+                <div style="height:50px; display:flex; align-items:center; justify-content:center;">
+                  <img id="kw-gkn-sig-img" src="" alt="" style="max-height:45px; display:none;">
+                </div>
+                <div class="kw-gkn-sig-line">( <span id="kw-gkn-signer-name">Ilham Dega Damawan</span> )</div>
+                <div style="font-size:0.75rem; color:#4b5563; font-weight:600; margin-top:2px;">Direktur</div>
+              </div>
+            </footer>
+
+          </div>
+
+          <!-- Bottom Swooping Double Blue Wave Accent Bar -->
+          <div class="kw-gkn-bottom-wave">
+            <svg viewBox="0 0 860 40" preserveAspectRatio="none" style="width:100%; height:35px; display:block;">
+              <path d="M 0,40 Q 200,0 430,20 T 860,0 L 860,40 Z" fill="#0e4da4" />
+              <path d="M 0,35 Q 200,-5 430,15 T 860,-5 L 860,5 Q 430,25 200,5 Z" fill="#0284c7" />
+              <path d="M 0,38 Q 200,2 430,18 T 860,2 L 860,8 Q 430,28 200,8 Z" fill="#38bdf8" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- KWITANSI PRINTABLE SHEET (CV RAKSA GUNA UTAMA Navy/Green Cloned Design) -->
+        <div id="kwitansi-paper-rgu" class="kw-rgu-paper" style="display:none;">
+          
+          <!-- Background Watermark Logo & Halftone Matrix -->
+          <img id="kw-rgu-watermark-logo" src="assets/logo_rgu.svg" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:340px; opacity:0.07; pointer-events:none; z-index:1;" alt="Watermark RGU">
+          <div class="rgu-halftone-pattern"></div>
+
+          <!-- Foreground Content Overlay -->
+          <div style="position:relative; z-index:2; display:flex; flex-direction:column; height:100%; justify-content:space-between;">
+            
+            <!-- HEADER SECTION -->
+            <header class="kw-rgu-header">
+              <!-- Left: Target Shield Logo + CV Contact Info -->
+              <div class="kw-rgu-brand">
+                <img id="kw-rgu-logo-img" src="assets/logo_rgu.svg" alt="Logo CV" class="kw-rgu-logo">
+                <div class="kw-rgu-info">
+                  <div id="kw-rgu-title-val" class="kw-rgu-title">CV RAKSA GUNA UTAMA</div>
+                  <div class="kw-rgu-address">
+                    <i class="fas fa-location-dot" style="color:#0e3870;"></i>
+                    <span id="kw-rgu-addr-val">Dusun Tanggulangin RT03/RW01, Desa Girikulon, Kec. Secang, Kab. Magelang Jawa Tengah</span>
+                  </div>
+                  <div class="kw-rgu-contact-row">
+                    <span class="kw-rgu-contact-item"><i class="fas fa-phone"></i> <span id="kw-rgu-phone-val">089518768553</span></span>
+                    <span class="kw-rgu-contact-sep">|</span>
+                    <span class="kw-rgu-contact-item"><i class="fas fa-envelope"></i> <span id="kw-rgu-email-val">raksagunautama@gmail.com</span></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: KUITANSI PEMBAYARAN Navy Banner + Swoop Wave -->
+              <div class="kw-rgu-banner-container">
+                <div class="kw-rgu-banner">
+                  KUITANSI PEMBAYARAN
+                </div>
+                <div class="kw-rgu-top-wave">
+                  <svg viewBox="0 0 260 30" preserveAspectRatio="none" style="width:100%; height:25px; display:block;">
+                    <path d="M 0,0 C 80,25 180,25 260,0 L 260,12 C 180,32 80,32 0,12 Z" fill="#0284c7" />
+                    <path d="M 0,10 C 80,30 180,30 260,10 L 260,18 C 180,35 80,35 0,18 Z" fill="#0b2347" />
+                  </svg>
+                </div>
+              </div>
+            </header>
+
+            <!-- META ROW: RECEIPT NO & DATE -->
+            <div class="kw-rgu-meta-row">
+              <div>
+                <span>No. Receipt:</span>
+                <div id="kw-rgu-no-val" class="kw-rgu-meta-line">001/OPS/SPPG/VIII/26</div>
+              </div>
+              <div>
+                <span>Tanggal:</span>
+                <div id="kw-rgu-date-val" class="kw-rgu-meta-line">02 Oktober 2026</div>
+              </div>
+            </div>
+
+            <!-- STRUCTURED NAVY LABEL BOXES -->
+            <div class="kw-rgu-boxes-container">
+              <!-- Row 1: Telah diterima dari -->
+              <div class="kw-rgu-box-row">
+                <div class="kw-rgu-box-label">Telah diterima dari</div>
+                <div class="kw-rgu-box-value">
+                  <div id="kw-rgu-terima-val" class="kw-rgu-underline-text">SPPG NGADIHARJO, BOROBUDUR</div>
+                </div>
+              </div>
+
+              <!-- Row 2: Uang sebanyak -->
+              <div class="kw-rgu-box-row">
+                <div class="kw-rgu-box-label">Uang sebanyak</div>
+                <div class="kw-rgu-box-value">
+                  <div id="kw-rgu-terbilang-val" class="kw-rgu-underline-text" style="font-style:italic;">Tiga Puluh Juta Rupiah</div>
+                </div>
+              </div>
+
+              <!-- Row 3: Untuk Keperluan -->
+              <div class="kw-rgu-box-row">
+                <div class="kw-rgu-box-label" style="height:auto;">Untuk Keperluan</div>
+                <div class="kw-rgu-box-value">
+                  <div id="kw-rgu-keterangan-val" class="kw-rgu-underline-text">Pembayaran Pembayaran Jasa Rentokil SPPG Periode 28 September – 02 Oktober 2026</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- FOOTER ROW: NOMINAL BADGE & SIGNATURE -->
+            <footer class="kw-rgu-footer-row">
+              <!-- Left: Navy Pill Nominal Badge -->
+              <div class="kw-rgu-nominal-pill">
+                <div class="kw-rgu-nominal-left">Nominal:</div>
+                <div id="kw-rgu-jumlah-val" class="kw-rgu-nominal-right">Rp. 30.000.000,00</div>
+              </div>
+
+              <!-- Right: Location & Signature -->
+              <div class="kw-rgu-sig-container">
+                <div><span id="kw-rgu-city-val">Magelang</span>, <span id="kw-rgu-sig-date-val">02 Oktober 2026</span></div>
+                <div id="kw-rgu-sig-label-val" style="margin-top:0.2rem;">Penerima</div>
+                <div style="height:50px; display:flex; align-items:center; justify-content:center;">
+                  <img id="kw-rgu-sig-img" src="" alt="" style="max-height:45px; display:none;">
+                </div>
+                <div class="kw-rgu-sig-line"></div>
+              </div>
+            </footer>
+
+          </div>
+
+          <!-- Bottom Swooping Deep Navy Wave Accent Bar -->
+          <div class="kw-rgu-bottom-wave">
+            <svg viewBox="0 0 860 40" preserveAspectRatio="none" style="width:100%; height:35px; display:block;">
+              <path d="M 0,40 Q 200,0 430,20 T 860,0 L 860,40 Z" fill="#0b2347" />
+              <path d="M 0,35 Q 200,-5 430,15 T 860,-5 L 860,5 Q 430,25 200,5 Z" fill="#0284c7" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- INVOICE PRINTABLE SHEET (Exact Cloned CV Letterhead Template) -->
+        <div id="invoice-paper" class="invoice-paper" style="display:none;">
+          
+          <!-- Background Watermark Logo -->
+          <img id="inv-watermark-logo" src="assets/logo_asp.svg" class="inv-watermark-bg" alt="Watermark AP">
+
+          <!-- Top Right Decorative Corner Accent (for APS theme) -->
+          <div id="inv-top-corner-accent" class="inv-top-corner-accent" style="display:none;">
+            <svg viewBox="0 0 150 150" class="inv-corner-svg">
+              <path d="M 0,0 L 150,0 L 150,150 A 150,150 0 0,0 0,0 Z" fill="#0f1c3f" />
+              <path d="M 0,0 A 150,150 0 0,1 150,150" fill="none" stroke="#d4af37" stroke-width="4" />
+            </svg>
+          </div>
+
+          <!-- GSM Red Slanted Top Accent -->
+          <div id="inv-gsm-top-accent" class="inv-gsm-top-accent" style="display:none;">
+            <div class="gsm-red-top-bar"></div>
+          </div>
+
+          <!-- Foreground Content Overlay -->
+          <div style="position:relative; z-index:2;">
+            
+            <!-- LETTERHEAD HEADER SECTION -->
+            <header class="inv-header">
+              <div class="inv-header-top">
+                <div style="display:flex; align-items:center; gap:1.25rem;">
+                  <img id="inv-logo-img" src="assets/logo_asp.svg" alt="Logo CV" class="inv-logo-box">
+                  <div class="inv-company-info">
+                    <h1 id="inv-company-title" class="inv-company-title">CV ANDALAN SOLUSI PRIMA</h1>
+                    
+                    <!-- Gold Ornamental Divider for APS Theme -->
+                    <div id="inv-gold-divider" class="inv-gold-divider" style="display:none;">
+                      <div class="gold-line"></div>
+                      <div class="gold-ornament">◆</div>
+                      <div class="gold-line"></div>
+                    </div>
+
+                    <p id="inv-company-address" class="inv-company-address">Tirto RT 004/ RW 001, Grabag, Magelang, Jawa Tengah 56196</p>
+                    
+                    <div class="inv-company-contact">
+                      <span class="inv-contact-item"><i class="fas fa-location-dot" id="inv-icon-addr" style="display:none; color:#d4af37;"></i> <i class="fas fa-envelope" id="inv-icon-email"></i> <span id="inv-email-val">andalansolusiprima@gmail.com</span></span>
+                      <span id="inv-contact-sep-1" class="inv-contact-sep" style="display:none;">|</span>
+                      <span class="inv-contact-item"><i class="fas fa-phone"></i> <span id="inv-phone-val">087719205704</span></span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- GSM Header Right INVOICE Box -->
+                <div id="inv-gsm-header-right" class="inv-gsm-header-right" style="display:none;">
+                  <div class="gsm-divider-vert"></div>
+                  <h1 class="gsm-invoice-title">INVOICE</h1>
+                </div>
+              </div>
+
+              <!-- Double Accent Line -->
+              <div class="inv-header-line">
+                <div id="inv-line-left" class="inv-line-left"></div>
+                <div id="inv-line-right" class="inv-line-right"></div>
+                <div id="inv-line-stripes" class="inv-line-stripes" style="display:none;">
+                  <span></span><span></span><span></span>
+                </div>
+              </div>
+
+              <!-- GSM Dark Full-Width Contact Bar -->
+              <div id="inv-gsm-contact-bar" class="inv-gsm-contact-bar" style="display:none;">
+                <div class="gsm-contact-items">
+                  <span><i class="fas fa-location-dot"></i> <span id="gsm-addr-val">Susukan RT 005/ RW 002, Grabag, Magelang</span></span>
+                  <span><i class="fas fa-phone"></i> <span id="gsm-phone-val">087840939397</span></span>
+                  <span><i class="fas fa-envelope"></i> <span id="gsm-email-val">garudasafetymandiri@gmail.com</span></span>
+                </div>
+                <div class="gsm-contact-end-slant"></div>
+              </div>
+            </header>
+
+            <!-- INVOICE TITLE & META DETAILS -->
+            <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:1.5rem;">
+              <div>
+                <h2 style="font-size:1.8rem; font-weight:900; color:#111827; letter-spacing:0.05em; margin:0;">INVOICE</h2>
+                <span style="font-weight:600; color:#6b7280; font-size:0.85rem;">Tagihan Pembayaran Resmi</span>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-weight:800; font-size:1.1rem; color:#111827;">No. <span id="inv-no-val">INV/ASP/X/2026</span></div>
+                <div style="font-size:0.85rem; color:#4b5563;">Tanggal: <span id="inv-date-val">02 Oktober 2026</span></div>
+                <div style="font-size:0.85rem; color:#ef4444; font-weight:700;">Jatuh Tempo: <span id="inv-due-val">16 Oktober 2026</span></div>
+              </div>
+            </div>
+
+            <!-- BILL TO BOX -->
+            <div class="inv-meta-card" style="margin-bottom:1.5rem;">
+              <span style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:#6b7280;">TAGIHAN KEPADA (BILL TO):</span>
+              <div id="inv-billto-val" style="font-size:1.05rem; font-weight:800; color:#111827;">SPPG NGADIHARJO, BOROBUDUR</div>
+            </div>
+
+            <!-- ITEMS TABLE -->
+            <table class="inv-table">
+              <thead>
+                <tr>
+                  <th style="width:50px; text-align:center;">NO</th>
+                  <th>DESKRIPSI BARANG / JASA</th>
+                  <th style="width:80px; text-align:center;">QTY</th>
+                  <th style="width:140px; text-align:right;">HARGA SATUAN</th>
+                  <th style="width:150px; text-align:right;">TOTAL</th>
+                </tr>
+              </thead>
+              <tbody id="inv-table-body">
+                <!-- Generated dynamically -->
+              </tbody>
+            </table>
+
+            <!-- SUMMARY TOTALS & BANK BOX -->
+            <div class="inv-summary-section">
+              
+              <!-- Left: Bank Details Box -->
+              <div class="inv-bank-box">
+                <div class="inv-bank-title"><i class="fas fa-building-columns"></i> Pembayaran Transfer Bank:</div>
+                <div id="inv-bank-details-val" style="font-weight:700; color:#1f2937;">
+                  BCA 1234567890 a.n CV ANDALAN SOLUSI PRIMA
+                </div>
+                <div style="font-size:0.75rem; color:#6b7280; margin-top:0.2rem;">
+                  * Harap cantumkan Nomor Invoice saat konfirmasi transfer.
+                </div>
+              </div>
+
+              <!-- Right: Totals Table -->
+              <table class="inv-totals-table">
+                <tr>
+                  <td style="color:#6b7280;">Subtotal:</td>
+                  <td id="inv-subtotal-val" style="text-align:right; font-weight:700;">Rp 30.000.000,00</td>
+                </tr>
+                <tr>
+                  <td style="color:#6b7280;">Diskon:</td>
+                  <td id="inv-diskon-val" style="text-align:right; font-weight:600;">Rp 0,00</td>
+                </tr>
+                <tr>
+                  <td style="color:#6b7280;">PPN:</td>
+                  <td id="inv-ppn-val" style="text-align:right; font-weight:600;">Rp 0,00</td>
+                </tr>
+                <tr class="total-grand">
+                  <td>TOTAL:</td>
+                  <td id="inv-grandtotal-val" style="text-align:right;">Rp 30.000.000,00</td>
+                </tr>
+              </table>
+
+            </div>
+
+            <!-- TERBILANG INVOICE -->
+            <div style="background-color:#f9fafb; border:1px solid #e5e7eb; padding:0.6rem 1rem; border-radius:6px; margin-bottom:2rem; font-size:0.85rem;">
+              <strong>Terbilang:</strong> <span id="inv-terbilang-val" style="font-style:italic; font-weight:600; color:#111827;">Tiga Puluh Juta Rupiah</span>
+            </div>
+
+          </div>
+
+          <!-- LETTERHEAD FOOTER BAR SK AHU & NIB -->
+          <footer class="inv-footer-bar">
+            <!-- APS Bottom Wave Accent -->
+            <div id="inv-bottom-wave-aps" class="inv-bottom-wave-aps" style="display:none;">
+              <div class="aps-footer-bg"></div>
+              <div class="aps-footer-gold-curve"></div>
+            </div>
+
+            <!-- GSM Bottom Red/Charcoal Slanted Footer Accent -->
+            <div id="inv-gsm-footer-wave" class="inv-gsm-footer-wave" style="display:none;">
+              <div class="gsm-footer-red-bar"></div>
+              <div class="gsm-footer-right-accents">
+                <div class="gsm-footer-charcoal-block"></div>
+                <div class="gsm-footer-stripes">
+                  <span></span><span></span><span></span>
+                </div>
+                <div class="gsm-footer-red-corner"></div>
+              </div>
+            </div>
+
+            <!-- GNM Bottom Light Blue Soft Corner Arc -->
+            <div id="inv-gnm-corner-arc" class="inv-gnm-corner-arc" style="display:none;"></div>
+
+            <div class="inv-footer-left">
+              <div id="inv-footer-block" class="inv-footer-block"></div>
+              <div class="inv-footer-legal">
+                <div><i class="fas fa-file-contract"></i> <span id="inv-ahu-val">SK AHU - 0050599-AH.01.14 Tahun 2026</span></div>
+                <div><i class="fas fa-id-card"></i> <span id="inv-nib-val">NIB: 2907260089917</span></div>
+              </div>
+            </div>
+
+            <div style="text-align:center; font-size:0.8rem; font-weight:700; color:#111827;">
+              <div>Hormat Kami,</div>
+              <div id="inv-signature-box" style="height:50px; display:flex; align-items:center; justify-content:center;">
+                <!-- Signature Image -->
+              </div>
+              <div id="inv-cv-footer-name" style="text-decoration:underline; font-weight:800;">CV ANDALAN SOLUSI PRIMA</div>
+              <div id="inv-signer-title-val" style="font-size:0.75rem; color:#4b5563; font-weight:600; margin-top:1px; display:none;">Direktur</div>
+            </div>
+          </footer>
+
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Modal Review Kwitansi Overlay -->
+  <div id="modal-review" class="modal-overlay" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fas fa-file-circle-check"></i> Review & Verifikasi Kwitansi</h3>
+        <button id="btn-close-modal" class="btn-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="review-status-box">
+          <div class="review-status-item"><i class="fas fa-circle-check"></i> Nomor Kwitansi & Format Terverifikasi</div>
+          <div class="review-status-item"><i class="fas fa-circle-check"></i> Auto-Terbilang Sesuai Nominal Input</div>
+          <div class="review-status-item"><i class="fas fa-circle-check"></i> Data SPPG / Pembayar Terisi</div>
+        </div>
+        
+        <table class="review-table">
+          <tbody>
+            <tr><th>Yayasan / Instansi:</th><td id="rev-yayasan" style="font-weight:700; color:var(--accent-blue);">-</td></tr>
+            <tr><th>No. Kwitansi:</th><td id="rev-no">-</td></tr>
+            <tr><th>Kota & Tanggal:</th><td id="rev-date">-</td></tr>
+            <tr><th>Telah Diterima Dari:</th><td id="rev-terima">-</td></tr>
+            <tr><th>Jumlah Nominal:</th><td id="rev-jumlah" class="text-highlight">-</td></tr>
+            <tr><th>Terbilang:</th><td id="rev-terbilang">-</td></tr>
+            <tr><th>Keterangan:</th><td id="rev-keterangan">-</td></tr>
+            <tr><th>Tanda Tangan:</th><td id="rev-sig-status">-</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button id="modal-btn-edit" class="btn btn-outline"><i class="fas fa-pen"></i> Edit Kembali</button>
+        <button id="modal-btn-png" class="btn btn-secondary"><i class="fas fa-image"></i> Unduh PNG</button>
+        <button id="modal-btn-print" class="btn btn-primary"><i class="fas fa-print"></i> Cetak / PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Scripts -->
+  <script src="js/terbilang.js"></script>
+  <script src="js/signature.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
