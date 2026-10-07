@@ -235,28 +235,28 @@
             <label for="input-keterangan">Keterangan / Untuk Pembayaran</label>
             <textarea id="input-keterangan" rows="2" placeholder="Detail keperluan pembayaran..."></textarea>
           </div>
-        </div>
 
-        <!-- Interactive Signature Canvas -->
-        <div class="form-group">
-          <label>Tanda Tangan Penerima</label>
-          <div class="signature-control-box">
-            <div class="signature-canvas-container">
-              <canvas id="sig-canvas"></canvas>
-            </div>
-            <div class="sig-tools">
-              <div style="display:flex; gap:0.3rem;">
-                <button id="btn-undo-sig" class="btn btn-secondary btn-sm" title="Urungkan coretan">
-                  <i class="fas fa-undo"></i> Undo
-                </button>
-                <button id="btn-clear-sig" class="btn btn-secondary btn-sm" title="Hapus seluruh tanda tangan">
-                  <i class="fas fa-eraser"></i> Hapus
-                </button>
+          <!-- Interactive Signature Canvas (Kwitansi Only) -->
+          <div class="form-group">
+            <label>Tanda Tangan Penerima</label>
+            <div class="signature-control-box">
+              <div class="signature-canvas-container">
+                <canvas id="sig-canvas"></canvas>
               </div>
-              <label class="btn btn-outline btn-sm" style="margin:0; cursor:pointer;" title="Unggah gambar tanda tangan (PNG/JPG)">
-                <i class="fas fa-upload"></i> Unggah Gambar
-                <input type="file" id="input-sig-upload" accept="image/*" style="display:none;">
-              </label>
+              <div class="sig-tools">
+                <div style="display:flex; gap:0.3rem;">
+                  <button id="btn-undo-sig" class="btn btn-secondary btn-sm" title="Urungkan coretan">
+                    <i class="fas fa-undo"></i> Undo
+                  </button>
+                  <button id="btn-clear-sig" class="btn btn-secondary btn-sm" title="Hapus seluruh tanda tangan">
+                    <i class="fas fa-eraser"></i> Hapus
+                  </button>
+                </div>
+                <label class="btn btn-outline btn-sm" style="margin:0; cursor:pointer;" title="Unggah gambar tanda tangan (PNG/JPG)">
+                  <i class="fas fa-upload"></i> Unggah Gambar
+                  <input type="file" id="input-sig-upload" accept="image/*" style="display:none;">
+                </label>
+              </div>
             </div>
           </div>
         </div>
