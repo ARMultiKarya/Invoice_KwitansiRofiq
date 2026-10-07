@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 550 160" width="550" height="160">
+  <defs>
+    <linearGradient id="blueGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+    <linearGradient id="blueGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#0f2b5c" />
+    </linearGradient>
+  </defs>
+
+  <!-- Left Medical Ribbon Cross Emblem -->
+  <g transform="translate(10, 5)">
+    <!-- Vertical Arm - Upper Part -->
+    <path d="M 65,10 C 65,10 78,35 88,60 L 52,60 C 52,60 58,25 65,10 Z" fill="url(#blueGrad1)" />
+    <!-- Vertical Arm - Lower Part -->
+    <path d="M 65,140 C 65,140 52,115 42,90 L 78,90 C 78,90 72,125 65,140 Z" fill="url(#blueGrad2)" />
+
+    <!-- Horizontal Arm - Left Part -->
+    <path d="M 10,75 C 10,75 35,62 60,52 L 60,88 C 60,88 25,82 10,75 Z" fill="url(#blueGrad1)" />
+    <!-- Horizontal Arm - Right Part -->
+    <path d="M 140,75 C 140,75 115,88 90,98 L 90,62 C 90,62 125,68 140,75 Z" fill="url(#blueGrad2)" />
+
+    <!-- Center Soft Overlap Ribbon Curve -->
+    <path d="M 40,40 Q 75,75 110,110 Q 75,120 40,40 Z" fill="#0369a1" opacity="0.3" />
+  </g>
+
+  <!-- Right Company Typography -->
+  <g transform="translate(170, 40)">
+    <text x="0" y="36" font-family="'Inter', 'Arial Black', sans-serif" font-weight="900" font-size="34" fill="#0f2b5c" letter-spacing="1">
+      CV GRAHA NUSA MEDIKA
+    </text>
+  </g>
+</svg>
